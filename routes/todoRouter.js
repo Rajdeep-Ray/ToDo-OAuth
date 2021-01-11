@@ -81,15 +81,33 @@ todoRouter.route('/:id')
     })
     .post(authenticate.verifyUser, (req, res, next) => {
         // complete specific todo item
-        ToDo.findOneAndUpdate({ _id: req.params.id, account: req.user._id }, {
-            $set: { isDone: true }
-        })
+        ToDo.findOne({ _id: req.params.id, account: req.user._id })
             .then((todo) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json(todo);
+                if (todo.isDone) {
+                    // if complete change to incomplete
+                    ToDo.updateOne({ _id: req.params.id, account: req.user._id }, {
+                        $set: { isDone: false }
+                    })
+                        .then((todo) => {
+                            res.statusCode = 200;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.json(todo);
+                        })
+                        .catch((err) => next(err));
+                } else {
+                    // if incomplete change to complete
+                    ToDo.updateOne({ _id: req.params.id, account: req.user._id }, {
+                        $set: { isDone: true }
+                    })
+                        .then((todo) => {
+                            res.statusCode = 200;
+                            res.setHeader('Content-Type', 'application/json');
+                            res.json(todo);
+                        })
+                        .catch((err) => next(err));
+                }
             })
-            .catch((err) => next(err))
+
     })
     .put(authenticate.verifyUser, (req, res, next) => {
         // update specific todo item
