@@ -58,6 +58,7 @@ todoRouter.route('/deleted')
     .get(authenticate.verifyUser, (req, res, next) => {
         // returns list of deleted/trash todo items
         ToDo.find({ isTrash: true, account: req.user._id })
+            .populate('account')
             .then((todos) => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
@@ -70,6 +71,7 @@ todoRouter.route('/:id')
     .get(authenticate.verifyUser, (req, res, next) => {
         // returns specific todo item
         ToDo.findOne({ _id: req.params.id, account: req.user._id })
+            .populate('account')
             .then((todo) => {
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
