@@ -3,8 +3,6 @@ const ToDo = require('../models/todo');
 const todoRouter = express.Router();
 const authenticate = require('../authenticate');
 
-// TODO : TEST ALL ENDPOINTS
-
 todoRouter.use(express.json());
 
 todoRouter.route('/')
